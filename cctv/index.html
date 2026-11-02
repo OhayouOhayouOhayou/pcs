@@ -15,14 +15,17 @@
 <p id="msg">กำลังเปิดระบบ…</p>
 <script>
 // Fixed link that forwards to the current Cloudflare quick-tunnel address in ../targets.json.
-// Anything after '#' (the viewing key) stays in the browser and is passed along unchanged.
+// The viewing key may come as '#k=…' or, where '#' is not allowed (LINE endpoint URLs), as '?k=…';
+// either way it is handed on as '#k=…' so the CCTV server never sees it in a URL.
 (async () => {
   const name = 'cctv';
+  const key = new URLSearchParams(location.search).get('k');
+  const hash = key ? '#k=' + encodeURIComponent(key) : location.hash;
   try {
     const response = await fetch('../targets.json?t=' + Date.now(), { cache: 'no-store' });
     const target = (await response.json())[name];
     if (!target || !/^https:\/\/[a-z0-9-]+\.trycloudflare\.com$/.test(target.url)) throw new Error('no target');
-    location.replace(target.url + '/' + location.hash);
+    location.replace(target.url + '/' + hash);
   } catch {
     document.getElementById('msg').textContent = 'ระบบปิดอยู่ชั่วคราว ลองใหม่ภายหลัง';
   }
