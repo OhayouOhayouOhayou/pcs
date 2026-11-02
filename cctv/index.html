@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<title>กำลังเปิดระบบ…</title>
+<style>
+  body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 1rem;
+         font-family: "Leelawadee UI", Tahoma, sans-serif; color: #0e1b34; background: #f7f7f7; text-align: center; }
+</style>
+</head>
+<body>
+<p id="msg">กำลังเปิดระบบ…</p>
+<script>
+// Fixed link that forwards to the current Cloudflare quick-tunnel address in ../targets.json.
+// Anything after '#' (the viewing key) stays in the browser and is passed along unchanged.
+(async () => {
+  const name = 'cctv';
+  try {
+    const response = await fetch('../targets.json?t=' + Date.now(), { cache: 'no-store' });
+    const target = (await response.json())[name];
+    if (!target || !/^https:\/\/[a-z0-9-]+\.trycloudflare\.com$/.test(target.url)) throw new Error('no target');
+    location.replace(target.url + '/' + location.hash);
+  } catch {
+    document.getElementById('msg').textContent = 'ระบบปิดอยู่ชั่วคราว ลองใหม่ภายหลัง';
+  }
+})();
+</script>
+</body>
+</html>
